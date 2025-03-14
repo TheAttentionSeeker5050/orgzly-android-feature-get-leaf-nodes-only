@@ -181,5 +181,28 @@ abstract class NoteViewDao {
 
             GROUP BY notes.id, event_timestamp
         """
+
+        @Language("RoomSql")
+        const val QUERY_WITH_NOTE_EVENTS_AND_SEARCH_LEAF_NOTES_ONLY_WRAPPER = """
+            WITH RECURSIVE temp_notes AS 
+            ($QUERY_WITH_NOTE_EVENTS),
+            
+            rec_search_leaf_notes AS (
+                SELECT * from temp_notes
+            UNION ALL
+            SELECT 
+                a.*
+                FROM temp_notes a
+                JOIN rec_search_leaf_notes b
+                  ON a.parent_id = b.id
+            )
+            SELECT b.*
+            FROM rec_search_leaf_notes b
+            WHERE b.id NOT IN (
+                SELECT DISTINCT b.parent_id
+                FROM rec_search_leaf_notes b
+                WHERE parent_id IS NOT NULL
+            )
+        """
     }
 }
