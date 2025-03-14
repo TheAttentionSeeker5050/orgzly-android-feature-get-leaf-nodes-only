@@ -1195,19 +1195,12 @@ class DataRepository @Inject constructor(
         } else {
             "id"
         }
+        val query: String = if (query.options.searchLeafNodes)
+                NoteViewDao.QUERY_WITH_NOTE_EVENTS_AND_SEARCH_LEAF_NOTES_ONLY_WRAPPER
+                else NoteViewDao.QUERY_WITH_NOTE_EVENTS
 
-        val supportQuery = if (query.options.searchLeafNodes)
-            SupportSQLiteQueryBuilder
-                .builder("(${
-                    NoteViewDao.QUERY_WITH_NOTE_EVENTS_AND_SEARCH_LEAF_NOTES_ONLY_WRAPPER})")
-                .selection(selection2, selectionArgs.toTypedArray())
-                .groupBy(groupBy)
-                .having(having)
-                .orderBy(orderBy)
-                .create()
-            else
-            SupportSQLiteQueryBuilder
-                .builder("(${NoteViewDao.QUERY_WITH_NOTE_EVENTS})")
+        val supportQuery = SupportSQLiteQueryBuilder
+                .builder("($query)")
                 .selection(selection2, selectionArgs.toTypedArray())
                 .groupBy(groupBy)
                 .having(having)
