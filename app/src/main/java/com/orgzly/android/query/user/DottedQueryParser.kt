@@ -115,7 +115,7 @@ open class DottedQueryParser : QueryParser() {
                 if (days > 0) options.copy(agendaDays = days) else null
             },
             OptionMatch("""^(\.)?h\.(.+)""") { match, options ->
-                if (match.groupValues[2].lowercase() == HyerarchyType.LEAF.toString().lowercase())
+                if (match.groupValues[2].lowercase() == HierarchyType.LEAF.toString().lowercase())
                     options.copy(searchLeafNodes = true) else null
             }
     )
